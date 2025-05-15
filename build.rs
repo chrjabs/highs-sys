@@ -46,8 +46,14 @@ fn build() -> bool {
         .define("FAST_BUILD", "ON")
         .define("BUILD_SHARED_LIBS", "OFF")
         .define("CMAKE_MSVC_RUNTIME_LIBRARY", "MultiThreadedDLL")
-        .define("CMAKE_INTERPROCEDURAL_OPTIMIZATION", "FALSE")
-        .build();
+        .define("CMAKE_INTERPROCEDURAL_OPTIMIZATION", "FALSE");
+
+    #[cfg(feature = "libz")]
+    dst.define("ZLIB", "ON");
+    #[cfg(not(feature = "libz"))]
+    dst.define("ZLIB", "OFF");
+
+    let dst = dst.build();
 
     let include_path = dst.join("include").join("highs");
     generate_bindings(Some(include_path.as_path()).into_iter());
